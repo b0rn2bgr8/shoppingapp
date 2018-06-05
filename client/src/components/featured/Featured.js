@@ -1,42 +1,47 @@
 import React, { Component } from 'react';
-import { Container, Row} from 'reactstrap';
+import { Container, Row } from 'reactstrap';
 import ProductCard from './Card';
 
 class Featured extends Component {
-    constructor(props){
+    constructor(props) {
         super(props);
         this.state = {
             featured: []
         }
     }
 
-    componentDidMount(){
+    componentDidMount() {
         this.getProduct();
     }
 
-    getProduct(){
-        console.log("fired");
-        fetch('https://discountbuddy.azure-mobile.net/tables/products')
-        .then(res=>{return res.json()})
-        .then(result=> {
-            this.setState({
+    async getProduct() {
+        try {
+            let response = await fetch('https://discountbuddy.azure-mobile.net/tables/products');
+            let result = await response.json();
 
+            this.setState({
                 featured: result
-            })
-        })
+            });
+        } catch (err) {
+            console.error(err.message)
+        }
     }
 
     render() {
         return (
             <Container>
                 <Row>
-                   {
-                     this.state.featured.map((f, idx)=>{
-                         return (
-                             <ProductCard item={f} key={idx} />
-                         )
-                     })  
-                   } 
+                    <Col md={12}>
+                        <h4>Featured Products</h4>
+                    </Col>
+                    
+                    {
+                        this.state.featured.map((f, idx) => {
+                            return (
+                                <ProductCard item={f} key={idx} />
+                            )
+                        })
+                    }
                 </Row>
             </Container>
         );
